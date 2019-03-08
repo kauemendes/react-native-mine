@@ -100,7 +100,10 @@ const invertFlag = (board, row, column) => {
     field.flagged = !field.flagged
 }
 
+const flahsUsed = board => fields(board).filter(field => field.flagged).length
+
 export { 
+    flahsUsed,
     invertFlag,
     cloneBoard,
     openField,

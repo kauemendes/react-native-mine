@@ -5,7 +5,7 @@ const params = {
     borderSize: 5,
     fontSize: 15,
     headerRatio: 0.15, // Proporcao do Painel superior da Tela
-    difficultLevel: 0.1, // 10% de campos estarão com minas
+    difficultLevel: 0.10, // 10% de campos estarão com minas
     getColumnsAmount() {
         const width = Dimensions.get('window').width
         return Math.floor(width / this.blockSize)
