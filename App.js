@@ -1,10 +1,17 @@
 import React, {Component} from 'react';
-import { StyleSheet, Text, View} from 'react-native';
+import { StyleSheet, Text, View, Alert} from 'react-native';
 import params from './src/Params'
-import Field from './src/components/Field'
 import MineField from './src/components/MineField'
 
-import { createMinedBoard } from './src/functions'
+import {
+  invertFlag,
+  cloneBoard,
+  openField,
+  hasExplosion,
+  wonGame,
+  showMines,
+  createMinedBoard 
+} from './src/functions'
 
 const board = createMinedBoard()
 
@@ -25,8 +32,40 @@ export default class App extends Component {
     const cols = params.getColumnsAmount()
     const rows = params.getRowsAmount()
     return {
-      board: createMinedBoard(cols, rows, this.minesAmount())
+      board: createMinedBoard(cols, rows, this.minesAmount()),
+      won: false,
+      lost: false
     }
+  }
+
+  openField = (row, column) => {
+    const board = cloneBoard(this.state.board)
+    openField(board, row, column)
+    const lost = hasExplosion(board)
+    const won = wonGame(board)
+
+    if (lost) {
+      showMines(board)
+      Alert.alert('Perdeeeeu!', 'Tente de novamente')
+    }
+
+    if (won) {
+      Alert.alert('Venceeeuuu!', 'Bora de novo!')
+    }
+
+    this.setState({board, lost, won})
+  }
+
+  onSelectField = (row, column) => {
+    const board = cloneBoard(this.state.board)
+    invertFlag(board, row, column)
+    const won = wonGame(board)
+
+    if (won) {
+      Alert.alert('Venceeeuuu!', 'Bora de novo!')
+    }
+
+    this.setState({board, won})
   }
 
   render() {
@@ -36,7 +75,7 @@ export default class App extends Component {
         <Text style={styles.instructions}>Tamanho do Tabuleiro:
           {params.getRowsAmount()}x{params.getColumnsAmount()}</Text>
         <View style={styles.board}>
-          <MineField board={this.state.board} />
+          <MineField board={this.state.board} onOpenField={this.openField} onSelectField={this.onSelectField} />
         </View>
       </View>
     );
@@ -45,6 +84,7 @@ export default class App extends Component {
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: '#FFF',
     flex: 1,
     justifyContent: 'flex-end',
   },
